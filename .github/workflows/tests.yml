@@ -15,7 +15,16 @@ on:
       - '**/AUTHORS'
       - '**/LICENSE'
   # CoRise TODO: modify this workflow to run on each pull request
-
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+      - 'flaskbb/themes/**'
+      - '**.md'
+      - '**.rst'
+      - '**/CHANGES'
+      - '**/AUTHORS'
+      - '**/LICENSE'
 jobs:
   build:
 
@@ -56,7 +65,14 @@ jobs:
         flaskbb translations compile
     
     # CoRise TODO: add another job to the workflow that will run flake8 and report any errors that were introduced in the proposed change
-        
+    
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings.
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
     - name: Test with pytest
       run: |
         pytest --cov=./ --cov-report=html
