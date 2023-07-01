@@ -52,16 +52,27 @@ jobs:
       # CoRise TODO: Validate the terraform plan (if on a PR branch).
       - name: terraform validate
         working-directory: ./terraform
+        if: ${{ github.event_name == 'pull_request' }}
+        run: terraform validate -no-color
       # CoRise TODO: Prepare the terraform plan (if on a PR branch).
       - name: terraform plan
         working-directory: ./terraform
+        if: ${{ github.event_name == 'pull_request' }}
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
       # CoRise TODO: Fail the job if the plan failed
       - name: pass or fail
         uses: actions/github-script@v6
+        if: ${{ steps.plan.outcome == 'failure' }}
+        with:
+          script: |
+            core.setFailed('Plan failed!')
       # CoRise TODO: Apply the generated plan (after merging).
       - name: terraform apply
         id: apply
         working-directory: ./terraform
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: terraform apply -auto-approve -input=false
 
 
 
