@@ -3,16 +3,16 @@
 name: terraform
 
 on:
-    push:
-        branches: [ main ]
-        paths:
-            - 'terraform/*'
-            - '.github/workflows/terraform.yaml'
-    pull_request:
-        branches: [ main ]
-        paths:
-            - 'terraform/*'
-            - '.github/workflows/terraform.yaml'
+  push:
+    branches: [ main ]
+    paths:
+      - 'terraform/*'
+      - '.github/workflows/terraform.yaml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'terraform/*'
+      - '.github/workflows/terraform.yaml'
 jobs:
   format:
 
@@ -89,7 +89,3 @@ jobs:
         working-directory: ./terraform
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         run: terraform apply -auto-approve -input=false
-
-
-
-
