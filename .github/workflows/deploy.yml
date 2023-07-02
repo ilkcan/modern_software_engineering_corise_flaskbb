@@ -16,7 +16,7 @@ jobs:
       - name: Download latest build
         uses: actions/download-artifact@v3
         with: # CoRise TODO provide the name of the artifact build in the test workflow
-          name: 'flaskbb_application_artifact'
+          name: ${{ vars.FLASKBB_APPLICATION_ARTIFACT_NAME }}
 
       - name: Congifure AWS Credentials
         uses: aws-actions/configure-aws-credentials
@@ -26,13 +26,13 @@ jobs:
           aws-region: "eu-north-1" # CoRise TODO fill in the region that you will be using.
 
       - name: Upload application file to AWS
-        run: aws s3 cp flaskbb_deploy-${{github.sha}}.zip s3://ilkcan-flaskbbapp # CoRise TODO filling the name of the aprlication file and the name of the bucket you created
+        run: aws s3 cp flaskbb_deploy-${{github.sha}}.zip s3://${{vars.APP_S3_BUCKET}} # CoRise TODO filling the name of the aprlication file and the name of the bucket you created
 
       - name: Create new application version
         run: |  # CoRise TODO filling the name of the aprlication file and the name of the bucket you created
           aws elasticbeanstalk create-application-version \
           --application-name flaskbb \
-          --source-bundle S3Bucket="ilkcan-flaskbbapp",S3Key="flaskbb_deploy-${{github.sha}}.zip" \
+          --source-bundle S3Bucket="${{vars.APP_S3_BUCKET}}",S3Key="flaskbb_deploy-${{github.sha}}.zip" \
           --version-label "ver-${{ github.sha }}" \
           --description "commit-sha-${{ github.sha }}"
 
