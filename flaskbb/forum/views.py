@@ -43,6 +43,8 @@ from flaskbb.forum.topic_manager import TopicManager
 from .locals import current_category, current_forum, current_topic
 from .utils import force_login_if_needed
 
+from flaskbb.utils.cloud_watch import increment_visit_counter
+
 impl = HookimplMarker("flaskbb")
 
 logger = logging.getLogger(__name__)
@@ -52,6 +54,7 @@ class ForumIndex(MethodView):
 
     # CoRise TODO: incement the page visit counter in this method
     def get(self):
+
         categories = Category.get_all(user=real(current_user))
 
         # Fetch a few stats about the forum
@@ -71,6 +74,8 @@ class ForumIndex(MethodView):
         else:
             online_users = len(get_online_users())
             online_guests = len(get_online_users(guest=True))
+
+        increment_visit_counter("forum/index")
 
         return render_template(
             "forum/index.html",

@@ -61,6 +61,8 @@ from .services import (
     reset_service_factory,
 )
 
+from flaskbb.utils.cloud_watch import increment_visit_counter
+
 logger = logging.getLogger(__name__)
 
 
@@ -155,6 +157,7 @@ class Register(MethodView):
 
     # CoRise TODO: increment the page visit counter
     def get(self):
+        increment_visit_counter("auth/register")
         return render_template("auth/register.html", form=self.form())
 
     def post(self):
